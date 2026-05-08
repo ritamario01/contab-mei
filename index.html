@@ -497,6 +497,20 @@
       border-color: rgba(251, 113, 133, 0.65);
       background: rgba(127, 29, 29, 0.35);
     }
+    .ghost {
+      background: none;
+      border: none;
+      color: var(--accent);
+      padding: 0.4rem 0.6rem;
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.82rem;
+      transition: color 0.15s;
+    }
+    .ghost:hover {
+      color: var(--accent-hover);
+      text-decoration: underline;
+    }
 
     .cards-balanco {
       display: grid;
@@ -2373,6 +2387,9 @@
           saveState(state);
           renderCategorias(state);
           renderCategoriasSelect(document.getElementById('l-tipo').value);
+          if (document.getElementById('modal-edit').classList.contains('open')) {
+            renderCategoriasSelectEl(document.getElementById('edit-cat'), document.getElementById('edit-tipo').value, document.getElementById('edit-cat').value);
+          }
         });
       });
     }
@@ -3016,7 +3033,7 @@
           '<table class="dre-table inv-table">' +
           (function () {
             var rows = '';
-            CATEGORIAS.forEach(function (cat) {
+            allCategorias(state).forEach(function (cat) {
               if (cat.dreGrupo !== 'investimentos') return;
               var soma = 0;
               state.lancamentos.forEach(function (L) {
@@ -3096,7 +3113,7 @@
     var p = ym.split('-');
     var d = new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, 1);
     var s = d.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
-    return s.replace('.', '');
+    return s.replace(/\./g, '');
   }
 
   function renderFluxoContaSelect(state) {
@@ -3337,7 +3354,7 @@
       var catId = document.getElementById('l-cat').value;
       var desc = (document.getElementById('l-desc').value || '').trim();
 
-      if (!data || !/^\d{4}-\d{2}-\d{2}$/.test(data) || !comp) {
+      if (!data || !/^\d{4}-\d{2}-\d{2}$/.test(data) || !/^\d{4}-\d{2}$/.test(comp)) {
         alert('Informe uma data válida (DD/MM/AAAA) e competência.');
         return;
       }
@@ -3489,7 +3506,7 @@
       var contaId = document.getElementById('edit-conta').value;
       var desc = (document.getElementById('edit-desc').value || '').trim();
 
-      if (!data || !/^\d{4}-\d{2}-\d{2}$/.test(data) || !comp) { alert('Informe uma data válida (DD/MM/AAAA) e competência.'); return; }
+      if (!data || !/^\d{4}-\d{2}-\d{2}$/.test(data) || !/^\d{4}-\d{2}$/.test(comp)) { alert('Informe uma data válida (DD/MM/AAAA) e competência.'); return; }
       if (isNaN(valor) || valor <= 0) { alert('Informe um valor válido.'); return; }
       var cat = catById(catId);
       if (!cat || cat.fluxo !== tipo) { alert('Categoria incompatível com o tipo.'); return; }
